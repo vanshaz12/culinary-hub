@@ -12,7 +12,7 @@ import InputBase from '@mui/material/InputBase';
 import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { Favorite } from '@mui/icons-material';
+
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -48,6 +48,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
+const pages = [
+    { name: "FavoriteList", path: "/FavoriteList" }
+]
+
 
 const NavBar = () => {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -61,16 +65,9 @@ const NavBar = () => {
         setAnchorElNav(null);
     };
 
-    const handleOpenSearchMenu = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleCloseSearchMenu = () => {
-        setAnchorEl(null);
-    };
 
     return (
-        <AppBar>
+        <AppBar sx={{ backgroundColor: 'orange' }}>
             <Container maxWidth='xl'>
                 <Toolbar disableGutters>
                     <IconButton
@@ -100,6 +97,7 @@ const NavBar = () => {
                             letterSpacing: '.3rem',
                             color: 'inherit',
                             textDecoration: 'none',
+                            marginLeft: '10px'
                         }}
                     >
                         Culinary Hub
@@ -139,14 +137,14 @@ const NavBar = () => {
                             sx={{ my: 2, color: 'white', display: 'block' }}
                             href='/Portfolio'
                         >
-                            Portfolio
+                            new item
                         </Button>
                         <Button
                             onClick={handleCloseNavMenu}
                             sx={{ my: 2, color: 'white', display: 'block' }}
                             href='/Chatbot'
                         >
-                            ChatBot
+                            new item
                         </Button>
 
                     </Box>
