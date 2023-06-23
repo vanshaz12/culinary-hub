@@ -1,30 +1,64 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { Container, Typography, TextField, Button } from '@mui/material';
 
-const SignUp = (props) => {
-    const [email, setEmail] = useState('');
-    const [pass, setPass] = useState('');
+const SignUpPage = () => {
     const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(email);
-    }
+
+        // Implement your sign-up logic here
+        // Example: Make API call to sign up the user
+
+        // Reset the form fields
+        setName('');
+        setEmail('');
+        setPassword('');
+    };
 
     return (
-        <div className="auth-form-container">
-            <h2>Register</h2>
-            <form className="register-form" onSubmit={handleSubmit}>
-                <label htmlFor="name">Full name</label>
-                <input value={name} name="name" onChange={(e) => setName(e.target.value)} id="name" placeholder="full Name" />
-                <label htmlFor="email">email</label>
-                <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="youremail@gmail.com" id="email" name="email" />
-                <label htmlFor="password">password</label>
-                <input value={pass} onChange={(e) => setPass(e.target.value)} type="password" placeholder="********" id="password" name="password" />
-                <button type="submit">Log In</button>
+        <Container maxWidth="sm">
+            <Typography variant="h2" align="center" gutterBottom
+                sx={{
+                    marginTop: '10rem'
+                }}
+            >
+                Sign Up
+            </Typography>
+            <form onSubmit={handleSubmit}>
+                <TextField
+                    label="Name"
+                    variant="outlined"
+                    fullWidth
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    margin="normal"
+                />
+                <TextField
+                    label="Email"
+                    variant="outlined"
+                    fullWidth
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    margin="normal"
+                />
+                <TextField
+                    label="Password"
+                    variant="outlined"
+                    fullWidth
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    margin="normal"
+                />
+                <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: '1rem' }}>
+                    Sign Up
+                </Button>
             </form>
-            <button className="link-btn" onClick={() => props.onFormSwitch('login')}>Already have an account? Login here.</button>
-        </div>
-    )
-}
+        </Container>
+    );
+};
 
-export default SignUp
+export default SignUpPage;

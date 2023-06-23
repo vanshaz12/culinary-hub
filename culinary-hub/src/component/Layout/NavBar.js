@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Container from '@mui/material/Container';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,9 +10,7 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
 import { Person } from '@mui/icons-material';
-import SignUp from '../Pages/SignUp';
 
 const NavBar = () => {
     const [anchorElNav, setAnchorElNav] = useState(null);
@@ -26,21 +25,21 @@ const NavBar = () => {
 
     return (
         <AppBar sx={{ backgroundColor: 'orange' }}>
-            <Container maxWidth='xl'>
+            <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <IconButton
-                        size='large'
-                        edge='end'
-                        color='inherit'
+                        size="large"
+                        edge="end"
+                        color="inherit"
                         onClick={handleOpenNavMenu}
                     >
                         <MenuIcon />
                     </IconButton>
                     <Typography
-                        variant='h6'
+                        variant="h6"
                         noWrap
-                        component='a'
-                        href='/'
+                        component={Link}
+                        to="/"
                         sx={{
                             flexGrow: 1,
                             display: { xs: 'flex', lg: 'flex' },
@@ -64,21 +63,21 @@ const NavBar = () => {
                         <Button
                             onClick={handleCloseNavMenu}
                             sx={{ my: 2, color: 'white', display: 'block' }}
-                            href='/FavoriteList'
+                            href="/FavoriteList"
                         >
                             FavList
                         </Button>
                         <Button
                             onClick={handleCloseNavMenu}
                             sx={{ my: 2, color: 'white', display: 'block' }}
-                            href='/Recipes'
+                            href="/Recipes"
                         >
                             Recipes
                         </Button>
                         <Button
                             onClick={handleCloseNavMenu}
                             sx={{ my: 2, color: 'white', display: 'block' }}
-                            href='/Chatbot'
+                            href="/Chatbot"
                         >
                             new item
                         </Button>
@@ -86,8 +85,7 @@ const NavBar = () => {
                             onClick={handleOpenNavMenu}
                             sx={{ my: 2, color: 'white', display: 'block' }}
                             endIcon={<Person />}
-                        >
-                        </Button>
+                        ></Button>
                         <Menu
                             anchorEl={anchorElNav}
                             open={Boolean(anchorElNav)}
@@ -102,7 +100,9 @@ const NavBar = () => {
                             }}
                         >
                             <MenuItem onClick={handleCloseNavMenu}>Log In</MenuItem>
-                            <MenuItem onClick={SignUp}>Sign Up</MenuItem>
+                            <MenuItem component={Link} to="/signUp" onClick={handleCloseNavMenu}>
+                                Sign Up
+                            </MenuItem>
                             {/* <MenuItem onClick={handleCloseNavMenu}>Logout</MenuItem> */}
                         </Menu>
                     </Box>

@@ -6,9 +6,6 @@ app.listen(PORT, () => console.log(`Server is listening here: http://localhost:$
 
 app.use(express.json())
 
-let favoriteList = []
-let recipesinlist = []
-
-app.get('/favoriteList', (req, res) => {
-    res.json({ favoriteList })
-})
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/recipes', require('./routes/recipes'));
+app.use('/api/lists', require('./routes/lists'));
