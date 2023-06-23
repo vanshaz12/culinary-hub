@@ -1,11 +1,15 @@
 const express = require('express');
 const app = express();
-const port = 3001;
+const PORT = 3001;
+
+const usersController = require('./controllers/users_controller')
+const sessionsController = require('./controllers/sessions_controller')
+
+
 
 app.listen(PORT, () => console.log(`Server is listening here: http://localhost:${PORT}`))
 
 app.use(express.json())
 
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/recipes', require('./routes/recipes'));
-app.use('/api/lists', require('./routes/lists'));
+app.use('/api/users', usersController)
+app.use('/api/sessions', sessionsController)

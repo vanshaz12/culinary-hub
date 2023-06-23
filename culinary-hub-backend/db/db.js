@@ -1,22 +1,26 @@
-const { Pool } = require('pg');
+const pg = require('pg')
 
-const pool = new Pool({
-    user: 'your_postgres_username',
-    host: 'localhost',
-    database: 'your_database_name',
-    password: 'your_postgres_password',
-    port: 5432, // Default PostgreSQL port is 5432
-});
+const localDbName = 'sound_wave'
 
-// Test the connection
-pool.connect((err, client, done) => {
-    if (err) throw new Error('Error connecting to the database');
-    console.log('Connected to PostgreSQL');
-    client.release();
-});
+let db;
+if (process.env.DATABASE_URL) {
+    db = new pg.Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+            rejectUnauthorized: false
+        }
+    })
+} else {
+    if (process.env.DEV_DB_PASSWORD) {
+        db = new pg.Pool({
+            database: localDbName,
+            password: process.env.DEV_DB_PASSWORD
+        })
+    } else {
+        db = new pg.Pool({
+            database: localDbName
+        })
+    }
+}
 
-// Use the pool in your routes or controllers to interact with the database
-app.use((req, res, next) => {
-    req.db = pool;
-    next();
-});
+module.exports = db
