@@ -1,6 +1,6 @@
 const pg = require('pg')
 
-const localDbName = 'sound_wave'
+const localDbName = 'culinary_hub'
 
 let db;
 if (process.env.DATABASE_URL) {

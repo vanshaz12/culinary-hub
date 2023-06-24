@@ -99,7 +99,7 @@ const NavBar = () => {
                                 horizontal: 'right',
                             }}
                         >
-                            <MenuItem onClick={handleCloseNavMenu}>Log In</MenuItem>
+                            <MenuItem component={Link} to="/logIn" onClick={handleCloseNavMenu}>Log In</MenuItem>
                             <MenuItem component={Link} to="/signUp" onClick={handleCloseNavMenu}>
                                 Sign Up
                             </MenuItem>

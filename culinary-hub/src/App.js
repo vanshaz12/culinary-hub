@@ -5,6 +5,7 @@ import FavoriteList from './component/Pages/FavoriteList';
 import HomePage from './component/Pages/HomePage';
 import Recipes from './component/Pages/Recipes';
 import SignUp from './component/Pages/SignUp';
+import Login from './component/Pages/LogIn';
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/Recipes" element={<Recipes />} />
         <Route path="/signUp" element={<SignUp />} />
-
+        <Route path="/logIn" element={<Login />} />
       </Routes>
     </>
 

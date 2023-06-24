@@ -1,54 +1,48 @@
-import React, { useState } from 'react';
-import { Container, Typography, TextField, Button } from '@mui/material';
+import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom';
 
-const SignUpPage = () => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+import { Container, Typography, TextField, Button } from '@mui/material'
+
+const Login = () => {
+    const history = useHistory();
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:3001/api/signup', {
+            const response = await fetch('http://localhost:3001/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, email, password }),
+                body: JSON.stringify({ email, password }),
             });
 
             if (response.ok) {
-                // User registration successful
-                // Reset the form fields
-                setName('');
+                // Login successful
                 setEmail('');
                 setPassword('');
-                console.log('User registered successfully!');
+                console.log('Login successful!');
+                // Redirect to homepage
+                history.push('/');
             } else {
-                // User registration failed
+                // Login failed
                 const error = await response.json();
-                console.error('User registration failed:', error);
+                console.error('Login failed:', error);
             }
         } catch (error) {
-            console.error('Error occurred while registering user:', error);
+            console.error('Error occurred during login:', error);
         }
     };
 
     return (
         <Container maxWidth="sm">
             <Typography variant="h2" align="center" gutterBottom sx={{ marginTop: '10rem' }}>
-                Sign Up
+                Login
             </Typography>
             <form onSubmit={handleSubmit}>
-                <TextField
-                    label="Name"
-                    variant="outlined"
-                    fullWidth
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    margin="normal"
-                />
                 <TextField
                     label="Email"
                     variant="outlined"
@@ -67,11 +61,11 @@ const SignUpPage = () => {
                     margin="normal"
                 />
                 <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: '1rem' }}>
-                    Sign Up
+                    Login
                 </Button>
             </form>
         </Container>
-    );
-};
+    )
+}
 
-export default SignUpPage;
+export default Login
