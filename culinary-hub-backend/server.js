@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const PORT = 3001;
-const recipeController = require('./controllers/recipes_controller');
+const fetch = require('node-fetch')
 
 app.use(cors());
 
@@ -72,7 +72,8 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-const API_KEY = process.env.SPOONACULAR_API_KEY
+const API_KEY = 'bdcfcfd9559641359e2535faefbfa73d';
+
 
 app.get('/api/search-recipes', async (req, res) => {
     try {
@@ -82,7 +83,7 @@ app.get('/api/search-recipes', async (req, res) => {
             const data = await response.json();
             res.json(data);
         } else {
-            console.error('Error occurred during recipe search');
+            console.error('Error occurred during recipe search:', response.statusText);
             res.status(500).json({ error: 'Internal server error' });
         }
     } catch (error) {
