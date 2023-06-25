@@ -1,37 +1,23 @@
-import React, { useState } from 'react'
-import { useHistory } from 'react-router-dom';
-
-import { Container, Typography, TextField, Button } from '@mui/material'
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../utils/AuthContext';
+import { Container, Typography, TextField, Button } from '@mui/material';
 
 const Login = () => {
-    const history = useHistory();
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const navigate = useNavigate();
+    const { login } = useContext(AuthContext); // Access the login function from the AuthContext
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
-            const response = await fetch('http://localhost:3001/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            if (response.ok) {
-                // Login successful
-                setEmail('');
-                setPassword('');
-                console.log('Login successful!');
-                // Redirect to homepage
-                history.push('/');
-            } else {
-                // Login failed
-                const error = await response.json();
-                console.error('Login failed:', error);
-            }
+            // Call the login function from AuthContext
+            await login(email, password);
+            setEmail('');
+            setPassword('');
+            console.log('Login successful!');
+            navigate('/');
         } catch (error) {
             console.error('Error occurred during login:', error);
         }
@@ -65,7 +51,7 @@ const Login = () => {
                 </Button>
             </form>
         </Container>
-    )
-}
+    );
+};
 
-export default Login
+export default Login;

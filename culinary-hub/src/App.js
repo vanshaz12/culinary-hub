@@ -6,6 +6,7 @@ import HomePage from './component/Pages/HomePage';
 import Recipes from './component/Pages/Recipes';
 import SignUp from './component/Pages/SignUp';
 import Login from './component/Pages/LogIn';
+import RecipeDetails from './component/Pages/RecipeDetails';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/Recipes" element={<Recipes />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/logIn" element={<Login />} />
+        <Route path="/recipe/:id" element={<RecipeDetails />} />
       </Routes>
     </>
 

@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const PORT = 3001;
+const recipeController = require('./controllers/recipes_controller');
 
 app.use(cors());
 
@@ -68,5 +69,24 @@ app.post('/api/login', async (req, res) => {
     } catch (error) {
         console.error('Error occurred during login:', error);
         res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+const API_KEY = process.env.SPOONACULAR_API_KEY
+
+app.get('/api/search-recipes', async (req, res) => {
+    try {
+        const { query } = req.query;
+        const response = await fetch(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}&query=${query}`);
+        if (response.ok) {
+            const data = await response.json();
+            res.json(data);
+        } else {
+            console.error('Error occurred during recipe search');
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    } catch (error) {
+        console.error('Error occurred during recipe search:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });

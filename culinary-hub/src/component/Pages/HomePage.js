@@ -1,11 +1,16 @@
-import DefaultLayout from "../Layout/DefaultLayout";
-const HomePage = () => {
+import React, { useContext } from 'react';
+import { AuthContext } from '../utils/AuthContext';
+
+const Home = () => {
+    // const { user } = useContext(AuthContext);
 
     return (
-        <DefaultLayout>
-            <h1>Home Page</h1>
-        </DefaultLayout>
+        <div>
+            {/* {user && <h1>Welcome {user.name}!</h1>}
+            Rest of the home page content */}
+            <h1>Welcome User</h1>
+        </div>
     );
 };
 
-export default HomePage;
+export default Home;
