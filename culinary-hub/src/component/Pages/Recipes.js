@@ -5,6 +5,9 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/system';
 import SearchIcon from '@mui/icons-material/Search';
+import { Grid, Card, CardMedia, CardContent, Typography } from '@mui/material';
+import { Margin } from '@mui/icons-material';
+
 
 const SearchBox = styled('div')({
     display: 'flex',
@@ -13,7 +16,7 @@ const SearchBox = styled('div')({
 });
 
 const Recipes = () => {
-    const [query, setquery] = useState('');
+    const [query, setQuery] = useState('');
     const [recipes, setRecipes] = useState([]);
 
     const handleSearch = async () => {
@@ -32,29 +35,45 @@ const Recipes = () => {
 
     return (
         <DefaultLayout>
-            <div className="previous-search">
-                <h2>Previous Searches</h2>
-                <div className="previous-searches-container"></div>
-            </div>
+            <Typography variant="h4" component="h4" gutterBottom sx={{ marginTop: '7rem' }}>
+                Search your next creation..
+            </Typography>
             <SearchBox>
                 <TextField
                     variant="outlined"
                     placeholder="Search..."
-                    sx={{ height: '3.5rem' }}
+                    sx={{
+                        height: '3.5rem'
+                    }}
                     value={query}
-                    onChange={(e) => setquery(e.target.value)}
+                    onChange={(e) => setQuery(e.target.value)}
                 />
                 <Button variant="contained" onClick={handleSearch} sx={{ height: '3.5rem' }}>
                     <SearchIcon />
                 </Button>
             </SearchBox>
-            <div className="recipes-list">
+            <Grid container spacing={2} sx={{
+                marginTop: '2rem'
+            }}>
                 {recipes.map((recipe) => (
-                    <div key={recipe.id}>
-                        <Link to={`/recipe/${recipe.id}`}>{recipe.title}</Link>
-                    </div>
+                    <Grid item key={recipe.id} xs={12} sm={6} md={4}>
+                        <Card>
+                            <CardMedia component="img" src={recipe.image} alt={recipe.title} height="200" />
+                            <CardContent>
+                                <Typography variant="h6" component="h3" gutterBottom>
+                                    {recipe.title}
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                    {recipe.summary}
+                                </Typography>
+                                <Button component={Link} to={`/recipe/${recipe.id}`} variant="contained" size="small">
+                                    View Details
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </Grid>
                 ))}
-            </div>
+            </Grid>
         </DefaultLayout>
     );
 };

@@ -104,14 +104,53 @@ app.get('/api/recipes/:id', async (req, res) => {
             // Extract the necessary recipe details
             const { title, image, summary, extendedIngredients, instructions } = recipe;
 
+            // Normalize the extendedIngredients data
+            let formattedIngredients = [];
+            if (extendedIngredients && Array.isArray(extendedIngredients)) {
+                formattedIngredients = extendedIngredients.map((ingredient) => ingredient.original);
+            }
+
+            // Normalize the instructions data
+            let formattedInstructions = [];
+            if (instructions && Array.isArray(instructions)) {
+                formattedInstructions = instructions.map((instruction) => instruction.step);
+            }
+
             // Return the recipe details
-            res.status(200).json({ title, image, summary, ingredients: extendedIngredients, instructions });
+            res.status(200).json({
+                title,
+                image,
+                summary,
+                ingredients: formattedIngredients,
+                instructions: formattedInstructions,
+            });
         } else {
             console.error('Error occurred while fetching recipe details:', response.statusText);
             res.status(500).json({ message: 'Internal server error' });
         }
     } catch (error) {
         console.error('Error occurred while fetching recipe details:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+app.get('/api/recipes/:id/instructions', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Fetch the analyzed instructions from the Spoonacular API using the provided ID
+        const response = await fetch(`https://api.spoonacular.com/recipes/${id}/analyzedInstructions?apiKey=${API_KEY}`);
+        if (response.ok) {
+            const instructions = await response.json();
+
+            // Return the instructions data
+            res.status(200).json(instructions);
+        } else {
+            console.error('Error occurred while fetching recipe instructions:', response.statusText);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    } catch (error) {
+        console.error('Error occurred while fetching recipe instructions:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });

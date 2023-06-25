@@ -7,6 +7,7 @@ import Recipes from './component/Pages/Recipes';
 import SignUp from './component/Pages/SignUp';
 import Login from './component/Pages/LogIn';
 import RecipeDetails from './component/Pages/RecipeDetails';
+import Instructions from './component/Pages/Instructions';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/logIn" element={<Login />} />
         <Route path="/recipe/:id" element={<RecipeDetails />} />
+        <Route path="/recipes/:id/instructions" element={<Instructions />} />
       </Routes>
     </>
 
