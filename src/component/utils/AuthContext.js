@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
     const checkUserLoggedIn = async () => {
         try {
             // Make a request to the server to check the session and get the user information
-            const response = await fetch('/api/check-login');
+            const response = await fetch('http://localhost:3001/api/check-login');
             const data = await response.json();
 
             if (response.ok) {

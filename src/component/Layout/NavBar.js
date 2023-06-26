@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../utils/AuthContext';
 import AppBar from '@mui/material/AppBar';
 import Container from '@mui/material/Container';
@@ -16,6 +16,7 @@ import { Person } from '@mui/icons-material';
 const NavBar = () => {
     const { isLoggedIn, user, logout } = useContext(AuthContext);
     const [anchorElNav, setAnchorElNav] = React.useState(null);
+    const navigate = useNavigate();
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -23,6 +24,11 @@ const NavBar = () => {
 
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
+    };
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
     };
 
     return (
@@ -97,7 +103,7 @@ const NavBar = () => {
                                     <MenuItem key="settings" component={Link} to="/settings" onClick={handleCloseNavMenu}>
                                         Settings
                                     </MenuItem>,
-                                    <MenuItem key="logout" onClick={logout}>Logout</MenuItem>
+                                    <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
                                 ]
                             ) : (
                                 [
