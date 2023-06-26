@@ -1,4 +1,5 @@
 const express = require('express')
+const session = require('express-session');
 const app = express()
 const cors = require('cors')
 const PORT = 3001
@@ -18,6 +19,13 @@ app.get('/', (req, res) => {
     res.send('Welcome to the server')
 })
 
+app.use(
+    session({
+        secret: 'jvdjsvcjvcjsvcmhscmfg3i7g',
+        resave: false,
+        saveUninitialized: false,
+    })
+);
 
 // Handle user registration
 app.post('/api/signup', async (req, res) => {
@@ -50,27 +58,62 @@ app.post('/api/signup', async (req, res) => {
 // Handle user login
 app.post('/api/login', async (req, res) => {
     try {
-        const { email, password } = req.body
+        const { email, password } = req.body;
 
         // Check if the user exists
-        const user = await db.query('SELECT * FROM users WHERE email = $1', [email])
+        const user = await db.query('SELECT * FROM users WHERE email = $1', [email]);
         if (user.rows.length === 0) {
-            return res.status(404).json({ message: 'User not found' })
+            return res.status(404).json({ message: 'User not found' });
         }
 
         // Compare the provided password with the stored password
-        const match = await bcrypt.compare(password, user.rows[0].password_digest)
+        const match = await bcrypt.compare(password, user.rows[0].password_digest);
         if (!match) {
-            return res.status(401).json({ message: 'Invalid password' })
+            return res.status(401).json({ message: 'Invalid password' });
         }
 
+        // Set the session data
+        req.session.user = {
+            id: user.rows[0].id,
+            name: user.rows[0].name,
+            email: user.rows[0].email,
+        };
+
         // Login successful
-        res.status(200).json({ message: 'Login successful' })
+        console.log('User logged in:', user.rows[0].name);
+        res.status(200).json({ message: 'Login successful' });
     } catch (error) {
-        console.error('Error occurred during login:', error)
-        res.status(500).json({ message: 'Internal server error' })
+        console.error('Error occurred during login:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-})
+});
+
+//Check if the user is logged in
+app.get('/api/check-login', (req, res) => {
+    if (req.session.user) {
+        // User is logged in
+        res.status(200).json({ loggedIn: true, user: req.session.user });
+    } else {
+        // User is not logged in
+        res.status(200).json({ loggedIn: false });
+    }
+});
+
+
+//Logging the user out 
+// User logout
+app.get('/api/logout', (req, res) => {
+    // Clear the session data
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error occurred during logout:', err);
+            res.status(500).json({ message: 'Internal server error' });
+        } else {
+            res.status(200).json({ message: 'Logout successful' });
+        }
+    });
+});
+
 
 const API_KEY = 'bdcfcfd9559641359e2535faefbfa73d'
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -23,13 +23,26 @@ const FavoriteList = () => {
     const [itemName, setItemName] = useState('');
     const [editItemId, setEditItemId] = useState(null);
 
+    // Load list items from local storage on component mount
+    useEffect(() => {
+        const storedItems = localStorage.getItem('listItems');
+        if (storedItems) {
+            setListItems(JSON.parse(storedItems));
+        }
+    }, []);
+
+    // Save list items to local storage when they change
+    useEffect(() => {
+        localStorage.setItem('listItems', JSON.stringify(listItems));
+    }, [listItems]);
+
     const handleAddListItem = () => {
         setEditItemId(null);
         setOpenDialog(true);
     };
 
     const handleEditListItem = (id) => {
-        const itemToEdit = listItems.find(item => item.id === id);
+        const itemToEdit = listItems.find((item) => item.id === id);
         setItemName(itemToEdit.title);
         setEditItemId(id);
         setOpenDialog(true);
@@ -43,7 +56,7 @@ const FavoriteList = () => {
 
     const handleSaveItem = () => {
         if (editItemId) {
-            const updatedItems = listItems.map(item => {
+            const updatedItems = listItems.map((item) => {
                 if (item.id === editItemId) {
                     return {
                         ...item,
@@ -59,7 +72,7 @@ const FavoriteList = () => {
                 title: itemName,
                 date: new Date().toLocaleDateString()
             };
-            setListItems([...listItems, newItem]);
+            setListItems((prevItems) => [...prevItems, newItem]);
         }
         setItemName('');
         setEditItemId(null);
@@ -67,7 +80,7 @@ const FavoriteList = () => {
     };
 
     const handleDeleteListItem = (id) => {
-        const updatedItems = listItems.filter(item => item.id !== id);
+        const updatedItems = listItems.filter((item) => item.id !== id);
         setListItems(updatedItems);
     };
 
@@ -84,7 +97,7 @@ const FavoriteList = () => {
                 justifyContent="center"
                 minHeight="75vh" // Adjust as needed
             >
-                <List sx={{ width: '100rem', maxWidth: 360, bgcolor: 'background.paper' }}>
+                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                     {listItems.map((item) => (
                         <ListItem key={item.id} button>
                             <ListItemText primary={item.title} secondary={item.date} />
