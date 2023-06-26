@@ -1,14 +1,16 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../utils/AuthContext';
 
-const UserProfile = () => {
-    const { isLoggedIn, user } = useContext(AuthContext);
+const Home = () => {
+    // const { user } = useContext(AuthContext);
 
-    if (isLoggedIn && user) {
-        return <h1>Welcome, {user.name}</h1>;
-    } else {
-        return <h1>Welcome, Guest</h1>;
-    }
+    return (
+        <div>
+            {/* {user && <h1>Welcome {user.name}!</h1>}
+            Rest of the home page content */}
+            <h1>Welcome User</h1>
+        </div>
+    );
 };
 
-export default UserProfile;
+export default Home;

@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { Person } from '@mui/icons-material';
 
 const NavBar = () => {
-    const { isLoggedIn, logout } = useContext(AuthContext);
+    const { isLoggedIn, user, logout } = useContext(AuthContext);
     const [anchorElNav, setAnchorElNav] = React.useState(null);
 
     const handleOpenNavMenu = (event) => {
@@ -92,7 +92,7 @@ const NavBar = () => {
                             {isLoggedIn ? (
                                 [
                                     <MenuItem key="profile" component={Link} to="/profile" onClick={handleCloseNavMenu}>
-                                        Profile
+                                        {user && user.name ? user.name : 'Profile'}
                                     </MenuItem>,
                                     <MenuItem key="settings" component={Link} to="/settings" onClick={handleCloseNavMenu}>
                                         Settings

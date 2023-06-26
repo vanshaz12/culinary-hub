@@ -21,12 +21,22 @@ app.get('/', (req, res) => {
 
 app.use(
     session({
+        key: 'user_sid',
         secret: 'jvdjsvcjvcjsvcmhscmfg3i7g',
         resave: false,
         saveUninitialized: false,
+        cookie: { maxAge: 1000 * 60 * 60 * 24 }
     })
 );
 
+function logger(req, res, next) {
+    console.log(`${new Date()} ${req.method} ${req.path}`)
+
+    // next() calls the next function in middleware to run
+    next()
+}
+
+app.use(logger)
 // Handle user registration
 app.post('/api/signup', async (req, res) => {
     try {
@@ -81,7 +91,7 @@ app.post('/api/login', async (req, res) => {
 
         // Login successful
         console.log('User logged in:', user.rows[0].name);
-        res.status(200).json({ message: 'Login successful' });
+        res.status(200).json({ message: 'Login successful', user: req.session.user });
     } catch (error) {
         console.error('Error occurred during login:', error);
         res.status(500).json({ message: 'Internal server error' });
@@ -90,6 +100,7 @@ app.post('/api/login', async (req, res) => {
 
 //Check if the user is logged in
 app.get('/api/check-login', (req, res) => {
+    console.log('req.session.user:', req.session.user);
     if (req.session.user) {
         // User is logged in
         res.status(200).json({ loggedIn: true, user: req.session.user });
