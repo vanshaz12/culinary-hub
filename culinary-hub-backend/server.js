@@ -209,3 +209,90 @@ app.get('/api/recipes/:id/instructions', async (req, res) => {
     }
 });
 
+// Create a new list
+app.post('/api/lists', async (req, res) => {
+    try {
+        const { user_id, name } = req.body;
+
+        // Insert the new list into the database
+        const newList = await db.query('INSERT INTO lists (user_id, name) VALUES ($1, $2) RETURNING *', [user_id, name]);
+
+        res.status(201).json(newList.rows[0]);
+    } catch (error) {
+        console.error('Error creating list:', error);
+        res.status(500).json({ error: 'An error occurred while creating the list' });
+    }
+});
+
+// Fetch all lists
+app.get('/api/lists', async (req, res) => {
+    try {
+        // Retrieve all lists from the database
+        const lists = await db.query('SELECT * FROM lists');
+
+        res.status(200).json(lists.rows);
+    } catch (error) {
+        console.error('Error fetching lists:', error);
+        res.status(500).json({ error: 'An error occurred while fetching the lists' });
+    }
+});
+
+// Fetch a specific list by ID
+app.get('/api/lists/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Retrieve the list from the database based on the provided ID
+        const list = await db.query('SELECT * FROM lists WHERE id = $1', [id]);
+
+        if (list.rows.length === 0) {
+            return res.status(404).json({ error: 'List not found' });
+        }
+
+        res.status(200).json(list.rows[0]);
+    } catch (error) {
+        console.error('Error fetching list:', error);
+        res.status(500).json({ error: 'An error occurred while fetching the list' });
+    }
+});
+
+// Update a specific list by ID
+app.put('/api/lists/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name } = req.body;
+
+        // Update the list in the database based on the provided ID
+        const updatedList = await db.query('UPDATE lists SET name = $1 WHERE id = $2 RETURNING *', [name, id]);
+
+        if (updatedList.rows.length === 0) {
+            return res.status(404).json({ error: 'List not found' });
+        }
+
+        res.status(200).json(updatedList.rows[0]);
+    } catch (error) {
+        console.error('Error updating list:', error);
+        res.status(500).json({ error: 'An error occurred while updating the list' });
+    }
+});
+
+// Delete a specific list by ID
+app.delete('/api/lists/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Delete the list from the database based on the provided ID
+        const deletedList = await db.query('DELETE FROM lists WHERE id = $1 RETURNING *', [id]);
+
+        if (deletedList.rows.length === 0) {
+            return res.status(404).json({ error: 'List not found' });
+        }
+
+        res.status(200).json(deletedList.rows[0]);
+    } catch (error) {
+        console.error('Error deleting list:', error);
+        res.status(500).json({ error: 'An error occurred while deleting the list' });
+    }
+});
+
+
