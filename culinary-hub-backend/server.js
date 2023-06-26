@@ -39,6 +39,11 @@ function logger(req, res, next) {
 app.use(logger)
 // Handle user registration
 app.post('/api/signup', async (req, res) => {
+    // Check if the itemName is null or empty
+    if (!itemName) {
+        console.error('Item name cannot be empty');
+        return;
+    }
     try {
         const { name, email, password } = req.body
 
@@ -209,20 +214,58 @@ app.get('/api/recipes/:id/instructions', async (req, res) => {
     }
 });
 
+app.post('/api/lists/:listId/items', async (req, res) => {
+    try {
+        const { listId } = req.params;
+        const { name } = req.body;
+
+        // Check if the user is authenticated and the session is set
+        if (!req.session.user || !req.session.user.id) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        // Verify that the user has the necessary permissions to create items in the list
+        const listQuery = 'SELECT * FROM lists WHERE id = $1 AND user_id = $2';
+        const listResult = await pool.query(listQuery, [listId, req.session.user.id]);
+
+        if (listResult.rows.length === 0) {
+            return res.status(403).json({ error: 'Forbidden' });
+        }
+
+        // Insert the new list item into the database
+        const itemQuery = 'INSERT INTO list_items (list_id, name) VALUES ($1, $2) RETURNING *';
+        const newItemResult = await pool.query(itemQuery, [listId, name]);
+
+        res.status(201).json(newItemResult.rows[0]);
+    } catch (error) {
+        console.error('Error occurred while creating a list item:', error);
+        res.status(500).json({ error: 'An error occurred while creating the list item' });
+    }
+});
+
 // Create a new list
 app.post('/api/lists', async (req, res) => {
     try {
-        const { user_id, name } = req.body;
+        // Check if the user is authenticated and the session is set
+        if (!req.session.user || !req.session.user.id) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        // Get the necessary data from the request body
+        const { name } = req.body;
+        const userId = req.session.user.id;
 
         // Insert the new list into the database
-        const newList = await db.query('INSERT INTO lists (user_id, name) VALUES ($1, $2) RETURNING *', [user_id, name]);
+        const newList = await db.query('INSERT INTO lists (user_id, name) VALUES ($1, $2) RETURNING *', [userId, name]);
 
         res.status(201).json(newList.rows[0]);
     } catch (error) {
-        console.error('Error creating list:', error);
+        console.error('Error occurred while creating a list:', error);
         res.status(500).json({ error: 'An error occurred while creating the list' });
     }
 });
+
+
 
 // Fetch all lists
 app.get('/api/lists', async (req, res) => {

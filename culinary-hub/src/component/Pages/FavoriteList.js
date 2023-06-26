@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -22,19 +23,65 @@ const FavoriteList = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [itemName, setItemName] = useState('');
     const [editItemId, setEditItemId] = useState(null);
+    const navigate = useNavigate();
 
-    // Load list items from local storage on component mount
+    // Load list items from the backend on component mount
     useEffect(() => {
-        const storedItems = localStorage.getItem('listItems');
-        if (storedItems) {
-            setListItems(JSON.parse(storedItems));
-        }
+        fetchListItems();
     }, []);
 
-    // Save list items to local storage when they change
-    useEffect(() => {
-        localStorage.setItem('listItems', JSON.stringify(listItems));
-    }, [listItems]);
+    // Function to fetch the list items from the backend
+    const fetchListItems = async () => {
+        try {
+            const response = await fetch('/api/lists');
+            if (response.ok) {
+                const data = await response.json();
+                setListItems(data);
+            } else {
+                console.error('Error occurred while fetching list items:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error occurred while fetching list items:', error);
+        }
+    };
+
+    // Function to create a new list item in the backend
+    const createListItem = async () => {
+        try {
+            const response = await fetch('/api/lists', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: itemName }),
+            });
+            if (response.ok) {
+                const newItem = await response.json();
+                setListItems((prevItems) => [...prevItems, newItem]);
+                handleCloseDialog(); // Close the dialog after successful creation
+            } else {
+                // console.error('Error occurred while creating a list item:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error occurred while creating a list item:', error);
+        }
+    };
+
+    // Function to delete a list item in the backend
+    const deleteListItem = async (id) => {
+        try {
+            const response = await fetch(`/api/lists/${id}`, {
+                method: 'DELETE',
+            });
+            if (response.ok) {
+                setListItems((prevItems) => prevItems.filter((item) => item.id !== id));
+            } else {
+                console.error('Error occurred while deleting a list item:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error occurred while deleting a list item:', error);
+        }
+    };
 
     const handleAddListItem = () => {
         setEditItemId(null);
@@ -43,9 +90,11 @@ const FavoriteList = () => {
 
     const handleEditListItem = (id) => {
         const itemToEdit = listItems.find((item) => item.id === id);
-        setItemName(itemToEdit.title);
-        setEditItemId(id);
-        setOpenDialog(true);
+        if (itemToEdit) {
+            setEditItemId(id);
+            setItemName(itemToEdit.title);
+            setOpenDialog(true);
+        }
     };
 
     const handleCloseDialog = () => {
@@ -56,36 +105,50 @@ const FavoriteList = () => {
 
     const handleSaveItem = () => {
         if (editItemId) {
-            const updatedItems = listItems.map((item) => {
-                if (item.id === editItemId) {
-                    return {
-                        ...item,
-                        title: itemName
-                    };
-                }
-                return item;
-            });
-            setListItems(updatedItems);
+            updateListItem();
         } else {
-            const newItem = {
-                id: new Date().getTime(),
-                title: itemName,
-                date: new Date().toLocaleDateString()
-            };
-            setListItems((prevItems) => [...prevItems, newItem]);
+            createListItem();
         }
-        setItemName('');
-        setEditItemId(null);
-        setOpenDialog(false);
+    };
+
+    const updateListItem = async () => {
+        try {
+            const response = await fetch(`/api/lists/${editItemId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: itemName }), // Send the updated item title in the request body
+            });
+            if (response.ok) {
+                const updatedItem = await response.json();
+                setListItems((prevItems) => {
+                    return prevItems.map((item) => {
+                        if (item.id === updatedItem.id) {
+                            return updatedItem;
+                        }
+                        return item;
+                    });
+                });
+                handleCloseDialog(); // Close the dialog after successful update
+            } else {
+                console.error('Error occurred while updating a list item:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error occurred while updating a list item:', error);
+        }
     };
 
     const handleDeleteListItem = (id) => {
-        const updatedItems = listItems.filter((item) => item.id !== id);
-        setListItems(updatedItems);
+        deleteListItem(id);
     };
 
     const handleItemNameChange = (event) => {
         setItemName(event.target.value);
+    };
+
+    const handleListClick = (id) => {
+        navigate(`/list/${id}`);
     };
 
     return (
@@ -99,7 +162,7 @@ const FavoriteList = () => {
             >
                 <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                     {listItems.map((item) => (
-                        <ListItem key={item.id} button>
+                        <ListItem key={item.id} button onClick={() => handleListClick(item.id)}>
                             <ListItemText primary={item.title} secondary={item.date} />
                             <ListItemIcon onClick={() => handleDeleteListItem(item.id)}>
                                 <DeleteIcon />
