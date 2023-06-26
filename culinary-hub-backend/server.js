@@ -123,8 +123,10 @@ app.get('/api/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             console.error('Error occurred during logout:', err);
+            res.clearCookie('user_sid')
             res.status(500).json({ message: 'Internal server error' });
         } else {
+            res.clearCookie('user_sid')
             res.status(200).json({ message: 'Logout successful' });
         }
     });

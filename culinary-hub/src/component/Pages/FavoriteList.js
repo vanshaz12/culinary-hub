@@ -162,12 +162,14 @@ const FavoriteList = () => {
             >
                 <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                     {listItems.map((item) => (
-                        <ListItem key={item.id} button onClick={() => handleListClick(item.id)}>
-                            <ListItemText primary={item.title} secondary={item.date} />
-                            <ListItemIcon onClick={() => handleDeleteListItem(item.id)}>
+                        <ListItem key={item.id} button onClick={() => handleListClick(item.id)} sx={{
+                            margin: '2rem'
+                        }}>
+                            <ListItemText primary={item.name} secondary={item.date} />
+                            <ListItemIcon onClick={() => deleteListItem(item.id)}>
                                 <DeleteIcon />
                             </ListItemIcon>
-                            <ListItemIcon onClick={() => handleEditListItem(item.id)}>
+                            <ListItemIcon onClick={() => updateListItem(item.id)}>
                                 <EditIcon />
                             </ListItemIcon>
                         </ListItem>
