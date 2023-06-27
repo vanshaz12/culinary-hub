@@ -33,7 +33,7 @@ const FavoriteList = () => {
     // Function to fetch the list items from the backend
     const fetchListItems = async () => {
         try {
-            const response = await fetch('/api/lists');
+            const response = await fetch('http://localhost:3001/api/lists');
             if (response.ok) {
                 const data = await response.json();
                 setListItems(data);
@@ -48,7 +48,7 @@ const FavoriteList = () => {
     // Function to create a new list item in the backend
     const createListItem = async () => {
         try {
-            const response = await fetch('/api/lists', {
+            const response = await fetch('http://localhost:3001/api/lists/:listId/items', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

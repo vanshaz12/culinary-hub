@@ -3,6 +3,7 @@ import { AuthContext } from '../utils/AuthContext';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
+import { CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
@@ -64,7 +65,7 @@ const Home = () => {
                             </Paper>
                         ) : (
                             <Typography variant="body1" align="center">
-                                Loading featured recipe...
+                                <CircularProgress />
                             </Typography>
                         )}
                     </Grid>
