@@ -13,7 +13,6 @@ export const AuthProvider = ({ children }) => {
 
     const checkUserLoggedIn = async () => {
         try {
-            // Check if the user is already logged in locally
             const isLoggedInLocally = localStorage.getItem('isLoggedIn');
             const userLocally = localStorage.getItem('user');
 
@@ -24,8 +23,9 @@ export const AuthProvider = ({ children }) => {
                 return;
             }
 
-            // Make a request to the server to check the session and get the user information
-            const response = await fetch('http://localhost:3001/api/check-login');
+            const response = await fetch('http://localhost:3001/api/check-login', {
+                credentials: 'include'
+            });
             const data = await response.json();
 
             console.log('Server response:', data); // Log the response data
@@ -61,13 +61,13 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            // Make a request to the server to log in the user
             const response = await fetch('http://localhost:3001/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ email, password }),
+                credentials: 'include'
             });
 
             if (response.ok) {
@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         try {
             // Make a request to the server to log out the user
-            await fetch('http://localhost:3001/api/logout');
+            await fetch('/api/logout');
 
             // Clear the authentication state locally
             localStorage.removeItem('isLoggedIn');

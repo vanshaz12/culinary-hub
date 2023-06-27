@@ -33,7 +33,7 @@ const FavoriteList = () => {
     // Function to fetch the list items from the backend
     const fetchListItems = async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/lists');
+            const response = await fetch('http://localhost:3001/api/lists/:id');
             if (response.ok) {
                 const data = await response.json();
                 setListItems(data);
@@ -48,7 +48,7 @@ const FavoriteList = () => {
     // Function to create a new list item in the backend
     const createListItem = async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/lists/:listId/items', {
+            const response = await fetch('http://localhost:3001/api/lists-new', { // Updated endpoint
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ const FavoriteList = () => {
                 setListItems((prevItems) => [...prevItems, newItem]);
                 handleCloseDialog(); // Close the dialog after successful creation
             } else {
-                // console.error('Error occurred while creating a list item:', response.statusText);
+                console.error('Error occurred while creating a list item:', response.statusText);
             }
         } catch (error) {
             console.error('Error occurred while creating a list item:', error);
