@@ -11,6 +11,7 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Person } from '@mui/icons-material';
 
 const NavBar = () => {
@@ -32,7 +33,7 @@ const NavBar = () => {
     };
 
     return (
-        <AppBar sx={{ backgroundColor: 'orange' }}>
+        <AppBar position="static" color="secondary" style={{ backgroundColor: 'crimson' }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
@@ -46,7 +47,7 @@ const NavBar = () => {
                             fontFamily: 'monospace',
                             fontWeight: 700,
                             letterSpacing: '.3rem',
-                            color: 'inherit',
+                            color: 'gold',
                             textDecoration: 'none',
                             marginLeft: '10px',
                         }}
@@ -57,28 +58,31 @@ const NavBar = () => {
                         sx={{
                             flexGrow: 1,
                             display: { xs: 'none', sm: 'flex' },
-                            justifyContent: 'flex-end',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
                         }}
                     >
                         <Button
                             onClick={handleCloseNavMenu}
-                            sx={{ my: 2, color: 'white', display: 'block' }}
-                            href="/Recipes"
+                            sx={{ color: 'gold' }}
+                            component={Link}
+                            to="/Recipes"
                         >
                             Recipes
                         </Button>
                         {isLoggedIn && (
                             <Button
                                 onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
-                                href="/FavoriteList"
+                                sx={{ color: 'gold' }}
+                                component={Link}
+                                to="/FavoriteList"
                             >
-                                FavList
+                                <FavoriteIcon />
                             </Button>
                         )}
                         <IconButton
                             onClick={handleOpenNavMenu}
-                            sx={{ my: 2, color: 'white', display: 'block' }}
+                            sx={{ color: 'gold' }}
                         >
                             <Person />
                         </IconButton>
@@ -97,22 +101,44 @@ const NavBar = () => {
                         >
                             {isLoggedIn ? (
                                 [
-                                    <MenuItem key="profile" component={Link} to="/profile" onClick={handleCloseNavMenu}>
+                                    <MenuItem
+                                        key="profile"
+                                        component={Link}
+                                        to="/profile"
+                                        onClick={handleCloseNavMenu}
+                                    >
                                         {user && user.name ? user.name : 'Profile'}
                                     </MenuItem>,
-                                    <MenuItem key="settings" component={Link} to="/settings" onClick={handleCloseNavMenu}>
+                                    <MenuItem
+                                        key="settings"
+                                        component={Link}
+                                        to="/settings"
+                                        onClick={handleCloseNavMenu}
+                                    >
                                         Settings
                                     </MenuItem>,
-                                    <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
+                                    <MenuItem key="logout" onClick={handleLogout}>
+                                        Logout
+                                    </MenuItem>,
                                 ]
                             ) : (
                                 [
-                                    <MenuItem key="login" component={Link} to="/logIn" onClick={handleCloseNavMenu}>
+                                    <MenuItem
+                                        key="login"
+                                        component={Link}
+                                        to="/logIn"
+                                        onClick={handleCloseNavMenu}
+                                    >
                                         Log In
                                     </MenuItem>,
-                                    <MenuItem key="signup" component={Link} to="/signUp" onClick={handleCloseNavMenu}>
+                                    <MenuItem
+                                        key="signup"
+                                        component={Link}
+                                        to="/signUp"
+                                        onClick={handleCloseNavMenu}
+                                    >
                                         Sign Up
-                                    </MenuItem>
+                                    </MenuItem>,
                                 ]
                             )}
                         </Menu>

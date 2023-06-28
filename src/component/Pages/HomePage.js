@@ -32,19 +32,19 @@ const Home = () => {
 
     return (
         <div style={{ marginTop: '7rem' }}>
-            {user ? (
-                <Typography variant="h4" align="center" gutterBottom>
-                    Welcome to Culinary Hub, {user.name}!
-                </Typography>
-            ) : (
-                <Typography variant="h4" align="center" gutterBottom>
-                    Welcome to Culinary Hub
-                </Typography>
-            )}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginBottom: '1rem' }}>
+                {user ? (
+                    <Typography variant="h4" gutterBottom style={{ fontFamily: 'Arial', color: '#333' }}>
+                        Welcome to Culinary Hub, {user.name}!
+                    </Typography>
+                ) : (
+                    <Typography variant="h4" gutterBottom style={{ fontFamily: 'Arial', color: '#333' }}>
+                        Welcome to Culinary Hub
+                    </Typography>
+                )}
+            </div>
             <section>
-                <Typography variant="h5" component="h2" gutterBottom>
-                    Featured Recipe
-                </Typography>
+                <Typography variant="h5" component="h2" gutterBottom sx={{ alignItems: 'center' }} style={{ fontFamily: 'Verdana', color: '#666' }}>Featured Recipe</Typography>
                 <Grid container justifyContent="center">
                     <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>
                         {featuredRecipe ? (
@@ -53,13 +53,13 @@ const Home = () => {
                                     <img
                                         src={featuredRecipe.image}
                                         alt={featuredRecipe.title}
-                                        style={{ width: '100%', height: 'auto', marginBottom: '10px' }}
+                                        style={{ width: '100%', height: 'auto', marginBottom: '10px', borderRadius: '5px' }}
                                     />
                                 </Link>
-                                <Typography variant="h6" align="center">
+                                <Typography variant="h6" align="center" style={{ fontFamily: 'Verdana', color: '#333' }}>
                                     {featuredRecipe.title}
                                 </Typography>
-                                <Typography variant="body2" align="center">
+                                <Typography variant="body2" align="center" style={{ fontFamily: 'Arial', color: '#666' }}>
                                     {parseDescription(featuredRecipe.summary)}
                                 </Typography>
                             </Paper>
@@ -71,9 +71,8 @@ const Home = () => {
                     </Grid>
                 </Grid>
             </section>
-            {/* Add more sections or components as desired */}
+
         </div>
     );
-};
-
+}
 export default Home;

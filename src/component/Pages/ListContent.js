@@ -47,7 +47,7 @@ const ListContents = () => {
                     {listItem.recipes && listItem.recipes.length > 0 ? (
                         <List>
                             {listItem.recipes.map((recipe) => (
-                                <ListItem key={recipe.id} component={Link} to={`/recipe/${recipe.id}`}>
+                                <ListItem key={recipe.id} component={Link} to={`/recipe/:id`}>
                                     <ListItemText primary={recipe.title} />
                                 </ListItem>
                             ))}

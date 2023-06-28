@@ -35,7 +35,7 @@ const FavoriteList = () => {
 
     const fetchListItems = async () => {
         try {
-            const response = await fetch(`/api/lists`); // Update the endpoint to include the listId
+            const response = await fetch(`/api/lists`);
             if (response.ok) {
                 const data = await response.json();
                 setListItems(data);
@@ -47,7 +47,6 @@ const FavoriteList = () => {
         }
     };
 
-    // Function to create a new list item in the backend
     const createListItem = async () => {
         try {
             const response = await fetch('/api/lists', {
@@ -55,12 +54,12 @@ const FavoriteList = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: itemName }), // Use itemName instead of listName
+                body: JSON.stringify({ name: itemName }),
             });
             if (response.ok) {
                 const newList = await response.json();
                 setLists((prevLists) => [...prevLists, newList]);
-                handleCloseDialog(); // Close the dialog after successful creation
+                handleCloseDialog();
             } else {
                 console.error('Error occurred while creating a list:', response.statusText);
             }
@@ -69,8 +68,6 @@ const FavoriteList = () => {
         }
     };
 
-
-    // Function to delete a list item in the backend
     const deleteListItem = async (id) => {
         try {
             const response = await fetch(`/api/lists/${id}`, {
@@ -81,6 +78,9 @@ const FavoriteList = () => {
             });
             if (response.ok) {
                 setListItems((prevItems) => prevItems.filter((item) => item.id !== id));
+            } else if (response.status === 404) {
+                const errorData = await response.json();
+                console.error('Error occurred while deleting a list item:', errorData.error);
             } else {
                 console.error('Error occurred while deleting a list item:', response.statusText);
             }
@@ -88,6 +88,7 @@ const FavoriteList = () => {
             console.error('Error occurred while deleting a list item:', error);
         }
     };
+
 
     const handleAddListItem = () => {
         setEditItemId(null);
@@ -113,7 +114,6 @@ const FavoriteList = () => {
         if (editItemId) {
             updateListItem();
         } else {
-            // Update the listName state with the entered value
             setListName(itemName);
             createListItem();
         }
@@ -138,7 +138,7 @@ const FavoriteList = () => {
                         return item;
                     });
                 });
-                handleCloseDialog(); // Close the dialog after successful update
+                handleCloseDialog();
             } else {
                 console.error('Error occurred while updating a list item:', response.statusText);
             }
@@ -166,6 +166,7 @@ const FavoriteList = () => {
             alignItems="center"
             justifyContent="center"
             minHeight="75vh"
+            marginTop="7rem"
         >
             <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                 {listItems.map((item) => (
@@ -173,9 +174,13 @@ const FavoriteList = () => {
                         key={item.id}
                         button
                         onClick={() => handleListClick(item.id)}
-                        sx={{ margin: '2rem' }}
+                        sx={{ margin: '2rem', fontFamily: 'Arial', color: '#333' }}
                     >
-                        <ListItemText primary={item.name} secondary={item.date} />
+                        <ListItemText
+                            primary={item.name}
+                            secondary={item.date}
+                            style={{ fontFamily: 'Verdana', color: '#666' }}
+                        />
                         <ListItemIcon
                             onClick={() => handleDeleteListItem(item.id)}
                             style={{ cursor: 'pointer' }}
