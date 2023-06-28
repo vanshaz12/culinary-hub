@@ -18,7 +18,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-const FavoriteList = ({ user }) => {
+const FavoriteList = () => {
     const [listItems, setListItems] = useState([]);
     const [lists, setLists] = useState([]);
     const [listName, setListName] = useState('');
@@ -56,7 +56,7 @@ const FavoriteList = ({ user }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: listName }),
+                body: JSON.stringify({ name: itemName }), // Use itemName instead of listName
             });
             if (response.ok) {
                 const newList = await response.json();
@@ -76,6 +76,9 @@ const FavoriteList = ({ user }) => {
         try {
             const response = await fetch(`/api/lists/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             });
             if (response.ok) {
                 setListItems((prevItems) => prevItems.filter((item) => item.id !== id));
@@ -111,6 +114,8 @@ const FavoriteList = ({ user }) => {
         if (editItemId) {
             updateListItem();
         } else {
+            // Update the listName state with the entered value
+            setListName(itemName);
             createListItem();
         }
     };
@@ -178,14 +183,12 @@ const FavoriteList = ({ user }) => {
                         >
                             <DeleteIcon />
                         </ListItemIcon>
-                        {item.creator === user.id && (
-                            <ListItemIcon
-                                onClick={() => handleEditListItem(item.id)}
-                                style={{ cursor: 'pointer' }}
-                            >
-                                <EditIcon />
-                            </ListItemIcon>
-                        )}
+                        <ListItemIcon
+                            onClick={() => handleEditListItem(item.id)}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <EditIcon />
+                        </ListItemIcon>
                     </ListItem>
                 ))}
             </List>
