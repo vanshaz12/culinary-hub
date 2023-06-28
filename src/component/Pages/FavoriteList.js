@@ -59,6 +59,7 @@ const FavoriteList = () => {
             if (response.ok) {
                 const newList = await response.json();
                 setLists((prevLists) => [...prevLists, newList]);
+                setListItems((prevItems) => [...prevItems, newList]);
                 handleCloseDialog();
             } else {
                 console.error('Error occurred while creating a list:', response.statusText);
