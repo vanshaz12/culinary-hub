@@ -33,10 +33,9 @@ const FavoriteList = () => {
         fetchListItems();
     }, []);
 
-    // Function to fetch the list items from the backend
     const fetchListItems = async () => {
         try {
-            const response = await fetch('/api/lists');
+            const response = await fetch(`/api/lists`); // Update the endpoint to include the listId
             if (response.ok) {
                 const data = await response.json();
                 setListItems(data);

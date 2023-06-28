@@ -1,19 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Typography, List, ListItem, ListItemText } from '@mui/material';
+import DefaultLayout from '../Layout/DefaultLayout';
 
-const ListItemDetails = () => {
+const ListContents = () => {
     const { id } = useParams();
     const [listItem, setListItem] = useState(null);
 
     useEffect(() => {
-        // Fetch the list item details using the id
         const fetchListItem = async () => {
             try {
                 const response = await fetch(`/api/lists/${id}`);
                 if (response.ok) {
                     const listItemData = await response.json();
                     setListItem(listItemData);
+
+                    // Fetch associated recipes from the list_recipes table
+                    const recipesResponse = await fetch(`/api/lists/${id}/recipes`);
+                    if (recipesResponse.ok) {
+                        const recipesData = await recipesResponse.json();
+                        setListItem((prevItem) => ({
+                            ...prevItem,
+                            recipes: recipesData,
+                        }));
+                    } else {
+                        console.error('Error occurred while fetching recipes:', recipesResponse.statusText);
+                    }
                 } else {
                     console.error('Error occurred while fetching list item details:', response.statusText);
                 }
@@ -25,21 +37,18 @@ const ListItemDetails = () => {
         fetchListItem();
     }, [id]);
 
+
     return (
-        <div>
+        <DefaultLayout>
             {listItem && (
                 <div>
                     <Typography variant="h4">{listItem.name}</Typography>
-                    <Typography variant="h6">List Item Details - {id}</Typography>
                     <Typography variant="h6">Recipes:</Typography>
                     {listItem.recipes && listItem.recipes.length > 0 ? (
                         <List>
                             {listItem.recipes.map((recipe) => (
-                                <ListItem key={recipe.id}>
-                                    <ListItemText primary={`Recipe Name: ${recipe.name}`} />
-                                    <ListItemText primary={`Preparation Time: ${recipe.preparationTime}`} />
-                                    <ListItemText primary={`Ingredients: ${recipe.ingredients}`} />
-                                    {/* Display other recipe details as needed */}
+                                <ListItem key={recipe.id} component={Link} to={`/recipe/${recipe.id}`}>
+                                    <ListItemText primary={recipe.title} />
                                 </ListItem>
                             ))}
                         </List>
@@ -48,8 +57,9 @@ const ListItemDetails = () => {
                     )}
                 </div>
             )}
-        </div>
+        </DefaultLayout>
     );
-};
 
-export default ListItemDetails;
+}
+
+export default ListContents;

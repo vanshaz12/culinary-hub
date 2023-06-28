@@ -83,17 +83,32 @@ const Recipes = () => {
         }
     };
 
-    const handleAddToSelectedList = async (recipeId) => {
+
+    const handleAddToSelectedList = async (recipeId, recipeTitle) => {
         try {
-            const response = await fetch(`/api/lists/${selectedList}/items`, {
+            if (!selectedList) {
+                console.error('No list item found');
+                return;
+            }
+
+            const response = await fetch(`/api/lists/${selectedList}/recipes`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ recipeId }),
+                body: JSON.stringify({
+                    id: recipeId,
+                    title: recipeTitle,
+                }),
             });
+
             if (response.ok) {
-                // Add any necessary UI updates here
+                const addedRecipe = await response.json();
+                console.log('Recipe added to the list:', addedRecipe);
+                setRecipes((prevRecipes) => {
+                    const updatedRecipes = [...prevRecipes, addedRecipe];
+                    return updatedRecipes;
+                });
             } else {
                 console.error('Error occurred while adding the recipe to the list:', response.statusText);
             }
@@ -166,10 +181,13 @@ const Recipes = () => {
                                 <Button
                                     variant="contained"
                                     disabled={!selectedList || (creatingNewList && !newListName)}
-                                    onClick={() => handleAddToSelectedList(recipe.id)}
+                                    onClick={() =>
+                                        handleAddToSelectedList(recipe.id, recipe.title, recipe.ingredients, recipe.instructions)
+                                    }
                                 >
                                     Add to List
                                 </Button>
+
                             </CardContent>
                         </Card>
                     </Grid>
