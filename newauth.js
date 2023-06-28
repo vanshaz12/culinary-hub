@@ -13,15 +13,33 @@ export const AuthProvider = ({ children }) => {
 
     const checkUserLoggedIn = async () => {
         try {
-            // Make a request to the server to check the session and get the user information
-            const response = await fetch('/api/check-login');
+            const isLoggedInLocally = localStorage.getItem('isLoggedIn');
+            const userLocally = localStorage.getItem('user');
+
+            if (isLoggedInLocally && userLocally) {
+                setIsLoggedIn(true);
+                setUser(JSON.parse(userLocally));
+                console.log('User logged in:', JSON.parse(userLocally).name);
+                return;
+            }
+
+            const response = await fetch('http://localhost:3001/api/check-login', {
+                credentials: 'include'
+            });
             const data = await response.json();
 
-            if (response.ok) {
+            console.log('Server response:', data); // Log the response data
+
+            if (response.ok && data) {
                 setIsLoggedIn(true);
                 setUser(data.user);
+
+                // Store the authentication state locally
+                localStorage.setItem('isLoggedIn', true);
+                localStorage.setItem('user', JSON.stringify(data.user));
+
                 if (data.user && data.user.name) {
-                    console.log('User logged in:', data.user.name); // Log the user's name
+                    console.log('User logged in:', data.user.name);
                 } else {
                     console.log('User logged in without a name');
                 }
@@ -41,26 +59,27 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // hello
-
-
-
     const login = async (email, password) => {
         try {
-            // Make a request to the server to log in the user
-            const response = await fetch('/api/login', {
+            const response = await fetch('http://localhost:3001/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ email, password }),
+                credentials: 'include'
             });
 
             if (response.ok) {
                 setIsLoggedIn(true);
                 const data = await response.json();
                 setUser(data.user);
-                console.log('User logged in:', data.user.name); // Log the user's name
+
+                // Store the authentication state locally
+                localStorage.setItem('isLoggedIn', true);
+                localStorage.setItem('user', JSON.stringify(data.user));
+
+                console.log('User logged in:', data.user.name);
             } else {
                 setIsLoggedIn(false);
                 setUser(null);
@@ -73,12 +92,14 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-
-
     const logout = async () => {
         try {
             // Make a request to the server to log out the user
             await fetch('/api/logout');
+
+            // Clear the authentication state locally
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('user');
 
             setIsLoggedIn(false);
             setUser(null);

@@ -9,7 +9,7 @@ const Instructions = () => {
     React.useEffect(() => {
         const fetchInstructions = async () => {
             try {
-                const response = await fetch(`http://localhost:3001/api/recipes/${id}/instructions`);
+                const response = await fetch(`/api/recipes/${id}/instructions`);
                 if (response.ok) {
                     const data = await response.json();
                     setInstructions(data);

@@ -24,7 +24,7 @@ const Recipes = () => {
 
     const handleSearch = async () => {
         try {
-            const response = await fetch(`http://localhost:3001/api/search-recipes?query=${query}`);
+            const response = await fetch(`/api/search-recipes?query=${query}`);
             if (response.ok) {
                 const data = await response.json();
                 setRecipes(data.results);
@@ -38,7 +38,7 @@ const Recipes = () => {
 
     const fetchLists = async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/lists');
+            const response = await fetch('/api/lists');
             if (response.ok) {
                 const data = await response.json();
                 setLists(data);
@@ -62,7 +62,7 @@ const Recipes = () => {
 
     const handleCreateList = async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/lists', {
+            const response = await fetch('/api/lists', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ const Recipes = () => {
 
     const handleAddToSelectedList = async (recipeId) => {
         try {
-            const response = await fetch(`http://localhost:3001/api/lists/${selectedList}/items`, {
+            const response = await fetch(`/api/lists/${selectedList}/items`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

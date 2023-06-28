@@ -10,12 +10,12 @@ const SignUpPage = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:3001/api/signup', {
+            const response = await fetch('/api/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, email, password }),
+                body: JSON.stringify({ name, email, password }), // Pass 'name' instead of 'username'
             });
 
             if (response.ok) {

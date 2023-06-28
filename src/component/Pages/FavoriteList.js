@@ -1,29 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+    Box,
+    List,
+    ListItem,
+    ListItemText,
+    ListItemIcon,
+    Fab,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    TextField,
+    DialogActions,
+    Button,
+} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Fab from '@mui/material/Fab';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import DefaultLayout from '../Layout/DefaultLayout';
 
-const FavoriteList = () => {
+const FavoriteList = ({ user }) => {
     const [listItems, setListItems] = useState([]);
+    const [lists, setLists] = useState([]);
+    const [listName, setListName] = useState('');
     const [openDialog, setOpenDialog] = useState(false);
     const [itemName, setItemName] = useState('');
     const [editItemId, setEditItemId] = useState(null);
     const navigate = useNavigate();
+    const { listId } = useParams();
 
     // Load list items from the backend on component mount
     useEffect(() => {
@@ -33,7 +36,7 @@ const FavoriteList = () => {
     // Function to fetch the list items from the backend
     const fetchListItems = async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/lists/:id');
+            const response = await fetch('/api/lists');
             if (response.ok) {
                 const data = await response.json();
                 setListItems(data);
@@ -48,24 +51,25 @@ const FavoriteList = () => {
     // Function to create a new list item in the backend
     const createListItem = async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/lists-new', { // Updated endpoint
+            const response = await fetch('/api/lists', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: itemName }),
+                body: JSON.stringify({ name: listName }),
             });
             if (response.ok) {
-                const newItem = await response.json();
-                setListItems((prevItems) => [...prevItems, newItem]);
+                const newList = await response.json();
+                setLists((prevLists) => [...prevLists, newList]);
                 handleCloseDialog(); // Close the dialog after successful creation
             } else {
-                console.error('Error occurred while creating a list item:', response.statusText);
+                console.error('Error occurred while creating a list:', response.statusText);
             }
         } catch (error) {
-            console.error('Error occurred while creating a list item:', error);
+            console.error('Error occurred while creating a list:', error);
         }
     };
+
 
     // Function to delete a list item in the backend
     const deleteListItem = async (id) => {
@@ -92,7 +96,7 @@ const FavoriteList = () => {
         const itemToEdit = listItems.find((item) => item.id === id);
         if (itemToEdit) {
             setEditItemId(id);
-            setItemName(itemToEdit.title);
+            setItemName(itemToEdit.name);
             setOpenDialog(true);
         }
     };
@@ -113,12 +117,12 @@ const FavoriteList = () => {
 
     const updateListItem = async () => {
         try {
-            const response = await fetch(`/api/lists/${editItemId}`, {
+            const response = await fetch(`/api/lists/${listId}/items/${editItemId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: itemName }), // Send the updated item title in the request body
+                body: JSON.stringify({ name: itemName }),
             });
             if (response.ok) {
                 const updatedItem = await response.json();
@@ -152,34 +156,43 @@ const FavoriteList = () => {
     };
 
     return (
-        <DefaultLayout>
-            <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="center"
-                minHeight="75vh" // Adjust as needed
-            >
-                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                    {listItems.map((item) => (
-                        <ListItem key={item.id} button onClick={() => handleListClick(item.id)} sx={{
-                            margin: '2rem'
-                        }}>
-                            <ListItemText primary={item.name} secondary={item.date} />
-                            <ListItemIcon onClick={() => deleteListItem(item.id)}>
-                                <DeleteIcon />
-                            </ListItemIcon>
-                            <ListItemIcon onClick={() => updateListItem(item.id)}>
+        <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            minHeight="75vh"
+        >
+            <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                {listItems.map((item) => (
+                    <ListItem
+                        key={item.id}
+                        button
+                        onClick={() => handleListClick(item.id)}
+                        sx={{ margin: '2rem' }}
+                    >
+                        <ListItemText primary={item.name} secondary={item.date} />
+                        <ListItemIcon
+                            onClick={() => handleDeleteListItem(item.id)}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <DeleteIcon />
+                        </ListItemIcon>
+                        {item.creator === user.id && (
+                            <ListItemIcon
+                                onClick={() => handleEditListItem(item.id)}
+                                style={{ cursor: 'pointer' }}
+                            >
                                 <EditIcon />
                             </ListItemIcon>
-                        </ListItem>
-                    ))}
-                </List>
+                        )}
+                    </ListItem>
+                ))}
+            </List>
 
-                <Fab color="primary" onClick={handleAddListItem}>
-                    <AddIcon />
-                </Fab>
-            </Box>
+            <Fab color="primary" onClick={handleAddListItem}>
+                <AddIcon />
+            </Fab>
 
             <Dialog open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>{editItemId ? 'Edit Item' : 'Add New Item'}</DialogTitle>
@@ -198,7 +211,7 @@ const FavoriteList = () => {
                     <Button onClick={handleSaveItem}>{editItemId ? 'Save Changes' : 'Save'}</Button>
                 </DialogActions>
             </Dialog>
-        </DefaultLayout>
+        </Box>
     );
 };
 

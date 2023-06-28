@@ -11,7 +11,7 @@ const RecipeDetails = () => {
     useEffect(() => {
         const fetchRecipeDetails = async () => {
             try {
-                const response = await fetch(`http://localhost:3001/api/recipes/${id}`);
+                const response = await fetch(`/api/recipes/${id}`);
                 if (response.ok) {
                     const data = await response.json();
                     setRecipe(data);
@@ -28,7 +28,7 @@ const RecipeDetails = () => {
 
     const handleViewInstructions = async () => {
         try {
-            const response = await fetch(`http://localhost:3001/api/recipes/${id}/instructions`);
+            const response = await fetch(`/api/recipes/${id}/instructions`);
             if (response.ok) {
                 const instructions = await response.json();
                 navigate(`/recipes/${id}/instructions`, { state: { instructions } });
